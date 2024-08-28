@@ -1,8 +1,11 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { userRoutes } from "./user";
+import url from "url";
 
 export const router = (req: IncomingMessage, res: ServerResponse): void => {
-  if (req.url?.startsWith("/users")) {
+  const parsedUrl = url.parse(req.url || "", true);
+  const path = parsedUrl.pathname;
+  if (path === "/users") {
     userRoutes(req, res);
   } else {
     res.statusCode = 404;
