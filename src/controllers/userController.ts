@@ -1,19 +1,4 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { readFileSync, writeFileSync } from "fs";
-import { join } from "path";
-
-// Utility function to read users from the JSON file
-const readUsersFromFile = (): any[] => {
-  const filePath = join(__dirname, "../data/users.json");
-  const data = readFileSync(filePath, "utf8");
-  return JSON.parse(data);
-};
-
-// Utility function to write users to the JSON file
-const writeUsersToFile = (users: any[]): void => {
-  const filePath = join(__dirname, "../data/users.json");
-  writeFileSync(filePath, JSON.stringify(users, null, 2), "utf8");
-};
 
 // Handle GET requests: Return the list of users
 export const getUser = (
@@ -36,7 +21,13 @@ export const createUser = (
   if (err) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ message: "Invalid JSON payload" }));
+
+    if (err instanceof Error) {
+      console.log(err.stack);
+      res.end(JSON.stringify({ message: err }));
+    } else {
+      res.end(JSON.stringify({ message: "Invalid JSON payload" }));
+    }
   } else {
     res.statusCode = 201;
     res.setHeader("Content-Type", "application/json");
