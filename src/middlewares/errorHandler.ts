@@ -2,20 +2,21 @@ import { IncomingMessage, ServerResponse } from "http";
 
 const errorHandler = (
   err: unknown,
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse
 ): void => {
+  let statusCode: number = res.statusCode || 500;
+  let message: string;
   if (err instanceof Error) {
     console.error(err.stack);
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: err.message }));
+    message = err.message;
   } else {
-    // If the error is not an instance of Error, handle it as a generic error
-    console.log(err)
-    res.statusCode = 500;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Internal Server Error' }));
+    console.log(err);
+    statusCode = res.statusCode;
+    message = "Internal Server Error";
   }
+  res.statusCode = statusCode;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({ message }));
 };
-export default errorHandler
+export default errorHandler;

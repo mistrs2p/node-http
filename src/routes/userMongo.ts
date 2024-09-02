@@ -1,17 +1,17 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { getUser, createUser } from "../controllers/userController";
-import mongoose from "mongoose";
+import {
+  getUsersFromMongo,
+  createUserInMongo,
+} from "../services/userServiceMongo";
 
-import User from "../models/UserMongo";
-import run from "../congfig/mongoDb";
 export const userMongoRoutes = async (
   req: IncomingMessage,
   res: ServerResponse
 ): Promise<void> => {
   try {
-    await run()
     if (req.method === "GET") {
-      const users = await User.find({});
+      const users: any = await getUsersFromMongo();
       getUser(req, res, users);
     } else if (req.method === "POST") {
       let body = "";
@@ -21,8 +21,7 @@ export const userMongoRoutes = async (
       req.on("end", async () => {
         try {
           const { name, email } = JSON.parse(body);
-          const newUser = new User({ name, email });
-          await newUser.save();
+          const newUser = await createUserInMongo(name, email);
           createUser(req, res, newUser, null);
         } catch (err) {
           createUser(req, res, null, err);
@@ -33,9 +32,8 @@ export const userMongoRoutes = async (
       res.end(JSON.stringify({ message: "Not Found" }));
     }
   } catch (err) {
-    console.log(err);
-  } finally {
-    await mongoose.connection.close();
-    console.log("Mongo DB closed successfully")
+    console.error(err);
+    res.statusCode = 500;
+    res.end(JSON.stringify({ message: "Internal Server Error" }));
   }
 };
