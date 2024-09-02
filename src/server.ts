@@ -1,9 +1,12 @@
 import { createServer } from "http";
 import logger from "./middlewares/logger";
-import { errorHandler } from "./middlewares/errorHandler";
+import errorHandler from "./middlewares/errorHandler";
 import { router } from "./routes/index";
+import run from "./congfig/mongoDb";
 
-const server = createServer((req, res) => {
+run();
+
+const server = createServer(async (req, res) => {
   try {
     logger(req, res, () => {
       router(req, res);

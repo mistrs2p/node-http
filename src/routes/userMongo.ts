@@ -1,23 +1,23 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { getUser, createUser } from "../controllers/userController";
-import { readUsersFromFile, writeUsersToFile } from "../storage";
-export const userRoutes = (req: IncomingMessage, res: ServerResponse): void => {
+import User from "../models/UserMongo";
+export const userMongoRoutes = async (
+  req: IncomingMessage,
+  res: ServerResponse
+): Promise<void> => {
   if (req.method === "GET") {
-    const users = readUsersFromFile();
+    const users = await User.find({});
     getUser(req, res, users);
   } else if (req.method === "POST") {
     let body = "";
     req.on("data", (chunk) => {
       body += chunk;
     });
-    req.on("end", () => {
+    req.on("end", async () => {
       try {
-        const users = readUsersFromFile();
-        const newUser = JSON.parse(body);
-        newUser.id = users.length ? users[users.length - 1].id + 1 : 1;
-        users.push(newUser);
-        writeUsersToFile(users);
-
+        const { name, email } = JSON.parse(body);
+        const newUser = new User({ name, email });
+        await newUser.save();
         createUser(req, res, newUser, null);
       } catch (err) {
         createUser(req, res, null, err);

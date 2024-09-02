@@ -21,6 +21,7 @@ export const createUser = (
   if (err) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "application/json");
+
     if (err instanceof Error) {
       console.log(err.stack);
       res.end(JSON.stringify({ message: err }));
@@ -28,8 +29,6 @@ export const createUser = (
       res.end(JSON.stringify({ message: "Invalid JSON payload" }));
     }
   } else {
-    // res.writeHead(201, { 'Content-Type': 'application/json' });
-
     res.statusCode = 201;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(newUser));
