@@ -1,17 +1,25 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getUser, createUser } from "../controllers/userController";
+import {
+  userCreate,
+  allUsersGet,
+  userErr,
+} from "../controllers/userController";
 import { IUser } from "../models/UserMysql";
-import mysqlDb from "../congfig/mysqlDb";
-
+import {
+  getUsersFromMysql,
+  createUserInMysql,
+} from "../services/userServiceMysql";
 export const userMysqlRoutes = async (
   req: IncomingMessage,
   res: ServerResponse
 ): Promise<void> => {
   if (req.method === "GET") {
-    const query = "SELECT * FROM users";
-    const [users] = await mysqlDb.query(query);
-
-    getUser(req, res, users as any);
+    try {
+      const users = await getUsersFromMysql();
+      allUsersGet(req, res, users as IUser[]);
+    } catch (err) {
+      userErr(req, res, err);
+    }
   } else if (req.method === "POST") {
     let body = "";
     req.on("data", (chunk) => {
@@ -20,19 +28,10 @@ export const userMysqlRoutes = async (
     req.on("end", async () => {
       try {
         const { name, email } = JSON.parse(body) as IUser;
-
-        const user: IUser = { name, email };
-        const query = "INSERT INTO users (name, email) VALUES (?, ?)";
-        try {
-          const [results] = await mysqlDb.query(query, [user.name, user.email]);
-
-          createUser(req, res, results, null);
-        } catch (err) {
-          res.writeHead(500, { "Content-Type": "application/json" });
-          res.end(JSON.stringify({ message: "Database error", error: err }));
-        }
+        const newUser = await createUserInMysql({ name, email });
+        userCreate(req, res, newUser);
       } catch (err) {
-        createUser(req, res, null, err);
+        userErr(req, res, err);
       }
     });
   } else {

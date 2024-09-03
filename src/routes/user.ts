@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getUser, createUser } from "../controllers/userController";
+import { getUser, userCreate, userErr } from "../controllers/userController";
 import { readUsersFromFile, writeUsersToFile } from "../storage";
 export const userRoutes = (req: IncomingMessage, res: ServerResponse): void => {
   if (req.method === "GET") {
@@ -18,9 +18,9 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse): void => {
         users.push(newUser);
         writeUsersToFile(users);
 
-        createUser(req, res, newUser, null);
+        userCreate(req, res, newUser);
       } catch (err) {
-        createUser(req, res, null, err);
+        userErr(req, res, err);
       }
     });
   } else {

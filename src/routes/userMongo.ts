@@ -1,5 +1,9 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { getUser, createUser } from "../controllers/userController";
+import {
+  allUsersGet,
+  userCreate,
+  userErr,
+} from "../controllers/userController";
 import {
   getUsersFromMongo,
   createUserInMongo,
@@ -12,7 +16,7 @@ export const userMongoRoutes = async (
   try {
     if (req.method === "GET") {
       const users: any = await getUsersFromMongo();
-      getUser(req, res, users);
+      allUsersGet(req, res, users);
     } else if (req.method === "POST") {
       let body = "";
       req.on("data", (chunk) => {
@@ -22,9 +26,9 @@ export const userMongoRoutes = async (
         try {
           const { name, email } = JSON.parse(body);
           const newUser = await createUserInMongo(name, email);
-          createUser(req, res, newUser, null);
+          userCreate(req, res, newUser);
         } catch (err) {
-          createUser(req, res, null, err);
+          userErr(req, res, err);
         }
       });
     } else {

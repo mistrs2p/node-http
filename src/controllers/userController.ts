@@ -1,4 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
+import { IUser } from "../models/UserMysql";
 
 // Handle GET requests: Return the list of users
 export const getUser = (
@@ -11,27 +12,41 @@ export const getUser = (
   res.end(JSON.stringify(users));
 };
 
-// Handle POST requests: Add a new user
-export const createUser = (
+export const userCreate = (
   req: IncomingMessage,
   res: ServerResponse,
-  newUser: any,
-  err: unknown
-): void => {
-  if (err) {
-    res.statusCode = 400;
-    res.setHeader("Content-Type", "application/json");
-    if (err instanceof Error) {
-      console.log(err.stack);
-      res.end(JSON.stringify({ message: err }));
-    } else {
-      res.end(JSON.stringify({ message: "Invalid JSON payload" }));
-    }
-  } else {
-    // res.writeHead(201, { 'Content-Type': 'application/json' });
+  user: IUser
+) => {
+  res.statusCode = 201;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(user));
+};
 
-    res.statusCode = 201;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(newUser));
+export const allUsersGet = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  users: IUser[]
+) => {
+  res.statusCode = 200;
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(users));
+};
+
+export const userErr = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  err: Error | unknown
+) => {
+  let message: string;
+  if (err instanceof Error) {
+    console.error(err.stack);
+    res.statusCode = 400;
+    message = err.message;
+  } else {
+    console.error(err);
+    message = "Internal Server Error";
+    res.statusCode = 500;
   }
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify({ message }));
 };
