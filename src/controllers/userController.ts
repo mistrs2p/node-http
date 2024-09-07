@@ -19,6 +19,7 @@ export const userCreate = (
 ) => {
   res.statusCode = 201;
   res.setHeader("Content-Type", "application/json");
+  console.log(user)
   res.end(JSON.stringify(user));
 };
 

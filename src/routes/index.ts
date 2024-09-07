@@ -1,19 +1,24 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { userRoutes } from "./user";
-import { userMongoRoutes } from "./userMongo";
 import url from "url";
+
+import { userRoutes } from "./userJson";
+import { userMongoRoutes } from "./userMongo";
 import { userMysqlRoutes } from "./userMysql";
 
-export const router = (req: IncomingMessage, res: ServerResponse): void => {
+export const router = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  data: any
+): void => {
   const parsedUrl = url.parse(req.url || "", true);
   const path = parsedUrl.pathname;
-  if (path === "/users") {
-    userRoutes(req, res);
+  if (path === "/users/json") {
+    userRoutes(req, res, data);
   } else if (path === "/users/mongo") {
-    userMongoRoutes(req, res);
+    userMongoRoutes(req, res, data);
   } else if (path === "/users/mysql") {
-    userMysqlRoutes(req, res);
-  }else {
+    userMysqlRoutes(req, res, data);
+  } else {
     res.statusCode = 404;
     res.end(JSON.stringify({ message: "Route Not Found" }));
   }

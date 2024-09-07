@@ -1,13 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { userCreate, allUsersGet } from "../controllers/userController";
-import { IUser } from "../models/UserMysql";
-export const userMysqlRoutes = async (
+import { getUser, userCreate } from "../controllers/userController";
+export const userRoutes = (
   req: IncomingMessage,
   res: ServerResponse,
   data: any
-): Promise<void> => {
+): void => {
   if (req.method === "GET") {
-    allUsersGet(req, res, data as IUser[]);
+    getUser(req, res, data);
   } else if (req.method === "POST") {
     userCreate(req, res, data);
   } else {
