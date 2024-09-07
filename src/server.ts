@@ -9,15 +9,15 @@ const PORT = process.env.PORT || 3001;
 
 const server = createServer(async (req, res) => {
   let body = "";
-
+  let data
   req.on("data", (chunk) => {
     body += chunk;
   });
   req.on("end", async () => {
-    const finalBody = JSON.parse(body);
+    data = JSON.parse(body);
 
     console.log("----------------------------------");
-    console.log("body", (finalBody));
+    console.log("body", (data));
     console.log("----------------------------------");
   });
 
