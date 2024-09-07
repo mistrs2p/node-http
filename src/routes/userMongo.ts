@@ -1,8 +1,9 @@
 import { IncomingMessage, ServerResponse } from "http";
+import { allUsersGet, userCreate } from "../controllers/userController";
 import {
-  allUsersGet,
-  userCreate,
-} from "../controllers/userController";
+  createUserInMongo,
+  getUsersFromMongo,
+} from "../services/userServiceMongo";
 
 export const userMongoRoutes = async (
   req: IncomingMessage,
@@ -10,10 +11,15 @@ export const userMongoRoutes = async (
   data: any
 ): Promise<void> => {
   try {
+    const parsedData = JSON.parse(data);
     if (req.method === "GET") {
-      allUsersGet(req, res, data);
+      const users = await getUsersFromMongo();
+      allUsersGet(req, res, users);
     } else if (req.method === "POST") {
-      userCreate(req, res, data);
+      console.log("data1111111111", data);
+      const { name, email } = parsedData;
+      const newUser = await createUserInMongo(name, email);
+      userCreate(req, res, newUser);
     } else {
       res.statusCode = 404;
       res.end(JSON.stringify({ message: "Not Found" }));
