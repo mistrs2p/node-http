@@ -5,7 +5,7 @@ import { userRoutes } from "./userJson";
 import { userMongoRoutes } from "./userMongo";
 import { userMysqlRoutes } from "./userMysql";
 
-export const router = (
+const router = (
   req: IncomingMessage,
   res: ServerResponse,
   data: any
@@ -23,3 +23,5 @@ export const router = (
     res.end(JSON.stringify({ message: "Route Not Found" }));
   }
 };
+
+export default router;

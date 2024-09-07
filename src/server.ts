@@ -1,9 +1,9 @@
 import { createServer } from "http";
 import logger from "./middlewares/logger";
 import cors from "./middlewares/cors";
+import runMiddlewares from "./middlewares/runMiddlewares";
 import errorHandler from "./middlewares/errorHandler";
-import methodHandler from "./middlewares/methodHandler";
-import { router } from "./routes/index";
+import router from "./routes/index";
 import bodyHandler from "./middlewares/bodyHandler";
 
 const PORT = process.env.PORT || 3001;
@@ -17,6 +17,7 @@ const server = createServer(async (req, res) => {
         });
       });
     });
+    runMiddlewares(req, res);
   } catch (err) {
     errorHandler(err, req, res);
   }
