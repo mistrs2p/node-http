@@ -1,23 +1,32 @@
-import { createServer } from "http";
+import { createServer, IncomingMessage, ServerResponse } from "http";
 import logger from "./middlewares/logger";
 import cors from "./middlewares/cors";
-import runMiddlewares from "./middlewares/runMiddlewares";
 import errorHandler from "./middlewares/errorHandler";
 import router from "./routes/index";
 import bodyHandler from "./middlewares/bodyHandler";
+
+import dotenv from "dotenv";
+import runMiddlewares from "./middlewares/runMiddlewares";
+
+dotenv.config();
+
+type NextFunction = (data?: any) => void;
+
+type Middleware = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  next: NextFunction
+) => void;
+
+const middlewares: Middleware[] = [cors, logger, bodyHandler];
 
 const PORT = process.env.PORT || 3001;
 
 const server = createServer(async (req, res) => {
   try {
-    cors(req, res, () => {
-      logger(req, res, () => {
-        bodyHandler(req, res, (data) => {
-          router(req, res, data);
-        });
-      });
+    runMiddlewares(req, res, middlewares, (data?: any) => {
+      router(req, res, data);
     });
-    runMiddlewares(req, res);
   } catch (err) {
     errorHandler(err, req, res);
   }

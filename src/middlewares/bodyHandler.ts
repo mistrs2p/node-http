@@ -8,7 +8,7 @@ const bodyHandler = (req: IncomingMessage, res: ServerResponse, next: (body: any
   });
   req.on("end", async () => {
     data = JSON.parse(body);
-    next(body);
+    next(data);
 
     console.log("----------------------------------");
     console.log("body Done: =>", data);

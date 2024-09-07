@@ -11,13 +11,12 @@ export const userMongoRoutes = async (
   data: any
 ): Promise<void> => {
   try {
-    const parsedData = JSON.parse(data);
+    // const parsedData = JSON.parse(data);
     if (req.method === "GET") {
       const users = await getUsersFromMongo();
       allUsersGet(req, res, users);
     } else if (req.method === "POST") {
-      console.log("data1111111111", data);
-      const { name, email } = parsedData;
+      const { name, email } = data;
       const newUser = await createUserInMongo(name, email);
       userCreate(req, res, newUser);
     } else {

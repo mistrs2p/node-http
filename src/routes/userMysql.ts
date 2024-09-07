@@ -10,15 +10,15 @@ export const userMysqlRoutes = async (
   res: ServerResponse,
   data: any
 ): Promise<void> => {
-  const parsedData = JSON.parse(data);
+  console.log("datadatadatadata", data);
   if (req.method === "GET") {
     const users = await getUsersFromMysql();
 
     allUsersGet(req, res, users as IUser[]);
   } else if (req.method === "POST") {
     const newUser = await createUserInMysql({
-      name: parsedData.name,
-      email: parsedData.email,
+      name: data.name,
+      email: data.email,
     });
     userCreate(req, res, newUser);
   } else {
