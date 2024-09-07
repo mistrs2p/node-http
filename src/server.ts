@@ -8,6 +8,19 @@ import { router } from "./routes/index";
 const PORT = process.env.PORT || 3001;
 
 const server = createServer(async (req, res) => {
+  let body = "";
+
+  req.on("data", (chunk) => {
+    body += chunk;
+  });
+  req.on("end", async () => {
+    const finalBody = JSON.parse(body);
+
+    console.log("----------------------------------");
+    console.log("body", (finalBody));
+    console.log("----------------------------------");
+  });
+
   try {
     cors(req, res, () => {
       logger(req, res, () => {
