@@ -1,41 +1,47 @@
 import { IncomingMessage, ServerResponse } from "http";
-import url from "url";
+import {
+  getAllUserJson,
+  createUserJson,
+} from "../controllers/userControllerJson";
+import {
+  getAllUserMysql,
+  createUserMysql,
+} from "../controllers/userControllerMysql";
+import {
+  getAllUserMongo,
+  createUserMongo,
+} from "../controllers/userControllerMongo";
 
-import { userRoutes } from "./userJson";
-import { userMongoRoutes } from "./userMongo";
-import { userMysqlRoutes } from "./userMysql";
-import { routeHandler, allRoute } from "./handler";
-import { getAllUser, createUser } from "../controllers/userControllerJson";
-const router = (req: IncomingMessage, res: ServerResponse, data: any): void => {
-  const parsedUrl = url.parse(req.url || "", true);
-  const path = parsedUrl.pathname;
+const routes: Record<
+  string,
+  (req: IncomingMessage, res: ServerResponse, data?: any) => void
+> = {
+  "POST /users/json": createUserJson,
+  "GET /users/json": getAllUserJson,
 
-  routeHandler("POST", "/users/json", createUser);
-  routeHandler("GET", "/users/json", getAllUser);
+  "POST /users/mysql": createUserMysql,
+  "GET /users/mysql": getAllUserMysql,
 
-  routeHandler("POST", "/users/mysql", userRoutes);
-  routeHandler("GET", "/users/mysql", userRoutes);
-
-  routeHandler("POST", "/users/mongo", userRoutes);
-  routeHandler("GET", "/users/mongo", userRoutes);
-
-  const exist = allRoute.find((r) => r.url === req.url);
-  if (!exist) {
-    res.statusCode = 404;
-    res.end(JSON.stringify({ message: "Route Not Found" }));
-  } else {
-    console.log(allRoute);
-  }
-  // if (path === "/users/json") {
-  //   userRoutes(req, res, data);
-  // } else if (path === "/users/mongo") {
-  //   userMongoRoutes(req, res, data);
-  // } else if (path === "/users/mysql") {
-  //   userMysqlRoutes(req, res, data);
-  // } else {
-  //   res.statusCode = 404;
-  //   res.end(JSON.stringify({ message: "Route Not Found" }));
-  // }
+  "POST /users/mongo": createUserMongo,
+  "GET /users/mongo": getAllUserMongo,
 };
 
-export default router;
+export const routeRequest = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  data?: any
+) => {
+  const method = req.method;
+  const url = req.url;
+
+  const routeKey = `${method} ${url}`;
+
+  const handler = routes[routeKey];
+
+  if (handler) {
+    handler(req, res, data);
+  } else {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ message: "Route Not Found" }));
+  }
+};

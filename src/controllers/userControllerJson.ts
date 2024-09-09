@@ -4,20 +4,20 @@ import {
   writeUsersToFile,
 } from "../services/userServiceJson";
 import { getUser, userCreate } from "./userController";
-
-export const getAllUser = (
+export const getAllUserJson = (
   req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>,
+  res: ServerResponse<IncomingMessage>
 ) => {
   const users = readUsersFromFile();
   getUser(req, res, users);
 };
 
-export const createUser = (
+export const createUserJson =async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
-  data: any,
+  data: any
 ) => {
+  console.log("createUser", data);
   const users = readUsersFromFile();
   console.log(data);
   const { name, email } = data;

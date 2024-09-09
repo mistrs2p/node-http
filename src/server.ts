@@ -2,11 +2,11 @@ import { createServer, IncomingMessage, ServerResponse } from "http";
 import logger from "./middlewares/logger";
 import cors from "./middlewares/cors";
 import errorHandler from "./middlewares/errorHandler";
-import router from "./routes/index";
 import bodyHandler from "./middlewares/bodyHandler";
 
 import dotenv from "dotenv";
 import runMiddlewares from "./middlewares/runMiddlewares";
+import { routeRequest } from "./routes";
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 3001;
 const server = createServer(async (req, res) => {
   try {
     runMiddlewares(req, res, middlewares, (data?: any) => {
-      router(req, res, data);
+      routeRequest(req, res, data);
     });
   } catch (err) {
     errorHandler(err, req, res);
