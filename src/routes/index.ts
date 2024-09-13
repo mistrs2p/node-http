@@ -1,4 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
+import { CustomResponse } from "../utils/responseClass";
+
 import {
   getAllUserJson,
   createUserJson,
@@ -29,7 +31,7 @@ const routes: Record<
 export const routeRequest = (
   req: IncomingMessage,
   res: ServerResponse,
-  data?: any
+  data?: any,
 ) => {
   const method = req.method;
   const url = req.url;
@@ -41,7 +43,9 @@ export const routeRequest = (
   if (handler) {
     handler(req, res, data);
   } else {
-    res.statusCode = 404;
-    res.end(JSON.stringify({ message: "Route Not Found" }));
+    new CustomResponse(req, res).handleResponse(
+      { error: "Route Not Found" },
+      404,
+    );
   }
 };

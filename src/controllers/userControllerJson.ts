@@ -4,18 +4,20 @@ import {
   writeUsersToFile,
 } from "../services/userServiceJson";
 import { getUser, userCreate } from "./userController";
+import { CustomResponse } from "../utils/responseClass";
+
 export const getAllUserJson = (
   req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>
+  res: ServerResponse<IncomingMessage>,
 ) => {
   const users = readUsersFromFile();
   getUser(req, res, users);
 };
 
-export const createUserJson =async (
+export const createUserJson = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
-  data: any
+  data: any,
 ) => {
   console.log("createUser", data);
   const users = readUsersFromFile();
@@ -25,5 +27,5 @@ export const createUserJson =async (
   newUser.id = users.length ? users[users.length - 1].id + 1 : 1;
   users.push(newUser);
   writeUsersToFile(users);
-  userCreate(req, res, newUser);
+  new CustomResponse(req, res).handleResponse({ message: newUser }, 201);
 };
