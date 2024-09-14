@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { CustomResponse } from "../utils/responseClass";
+import { CustomResponse, sendResponse } from "../utils/responseClass";
 
 import {
   getAllUserJson,
@@ -31,7 +31,7 @@ const routes: Record<
 export const routeRequest = (
   req: IncomingMessage,
   res: ServerResponse,
-  data?: any,
+  data?: any
 ) => {
   const method = req.method;
   const url = req.url;
@@ -41,11 +41,9 @@ export const routeRequest = (
   const handler = routes[routeKey];
 
   if (handler) {
-    handler(req, res, data);
+    const result = handler(req, res, data);
+    sendResponse(req, res, result.message, result.statusCode);
   } else {
-    new CustomResponse(req, res).handleResponse(
-      { error: "Route Not Found" },
-      404,
-    );
+    sendResponse(req, res, { error: "Route Not Found" }, 404);
   }
 };

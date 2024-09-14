@@ -3,14 +3,14 @@ import {
   readUsersFromFile,
   writeUsersToFile,
 } from "../services/userServiceJson";
-import { CustomResponse } from "../utils/responseClass";
+import { sendResponse } from "../utils/responseClass";
 
 export const getAllUserJson = (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>
 ) => {
   const users = readUsersFromFile();
-  new CustomResponse(req, res).handleResponse({ message: users }, 200);
+  return { message: users, statusCode: 200 };
 };
 
 export const createUserJson = async (
@@ -26,5 +26,5 @@ export const createUserJson = async (
   newUser.id = users.length ? users[users.length - 1].id + 1 : 1;
   users.push(newUser);
   writeUsersToFile(users);
-  new CustomResponse(req, res).handleResponse({ message: newUser }, 201);
+  return { message: newUser, statusCode: 201 };
 };

@@ -3,14 +3,14 @@ import {
   getUsersFromMongo,
   createUserInMongo,
 } from "../services/userServiceMongo";
-import { CustomResponse } from "../utils/responseClass";
+import { sendResponse } from "../utils/responseClass";
 
 export const getAllUserMongo = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>
 ) => {
   const users = await getUsersFromMongo();
-  new CustomResponse(req, res).handleResponse({ message: users }, 200);
+  return { message: users, statusCode: 200 }
 };
 
 export const createUserMongo = async (
@@ -20,5 +20,6 @@ export const createUserMongo = async (
 ) => {
   const { name, email } = data;
   const newUser = await createUserInMongo(name, email);
-  new CustomResponse(req, res).handleResponse({ message: newUser }, 201);
+  return { message: newUser, statusCode: 201 }
+
 };

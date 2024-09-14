@@ -1,5 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-interface ResponseData {
+export interface ResponseData {
   message?: string | object;
   error?: Error | unknown;
 }
@@ -18,8 +18,17 @@ export class CustomResponse extends JsonRespone {
     super(res);
     this.request = req;
   }
-  handleResponse(data: ResponseData, statusCode: number = 200) {
+  handleResponse(data: ResponseData, statusCode: number) {
     this.response.statusCode = statusCode;
     this.response.end(JSON.stringify(data));
   }
 }
+
+export const sendResponse = (
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage>,
+  data: ResponseData,
+  statusCode: number = 200
+) => {
+  new CustomResponse(req, res).handleResponse(data, statusCode);
+};

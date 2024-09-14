@@ -3,14 +3,14 @@ import {
   getUsersFromMysql,
   createUserInMysql,
 } from "../services/userServiceMysql";
-import { CustomResponse } from "../utils/responseClass";
+import { sendResponse } from "../utils/responseClass";
 
 export const getAllUserMysql = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>
 ) => {
   const users = await getUsersFromMysql();
-  new CustomResponse(req, res).handleResponse({ message: users }, 200);
+  return { message: users, statusCode: 200 };
 };
 
 export const createUserMysql = async (
@@ -20,5 +20,5 @@ export const createUserMysql = async (
 ) => {
   const { name, email } = data;
   const newUser = await createUserInMysql({ name, email });
-  new CustomResponse(req, res).handleResponse({ message: newUser }, 201);
+  return { message: newUser, statusCode: 201 };
 };
