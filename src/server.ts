@@ -19,7 +19,7 @@ type Middleware = (
   next: NextFunction
 ) => void;
 
-const middlewares: Middleware[] = [cors, logger, bodyHandler, validateUserData];
+const middlewares: Middleware[] = [cors, logger, bodyHandler];
 
 const PORT = process.env.PORT || 3001;
 
