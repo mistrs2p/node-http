@@ -7,8 +7,8 @@ import { sendResponse } from "../utils/responseClass";
 
 export const getAllUserMysql = async (
   req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>
-) => {
+  res: ServerResponse<IncomingMessage>,
+): Promise<{ message: any; statusCode: number }> => {
   const users = await getUsersFromMysql();
   return { message: users, statusCode: 200 };
 };
@@ -16,8 +16,8 @@ export const getAllUserMysql = async (
 export const createUserMysql = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
-  data: any
-) => {
+  data: any,
+): Promise<{ message: any; statusCode: number }> => {
   const { name, email } = data;
   const newUser = await createUserInMysql({ name, email });
   return { message: newUser, statusCode: 201 };

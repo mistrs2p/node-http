@@ -16,7 +16,11 @@ import {
 
 const routes: Record<
   string,
-  (req: IncomingMessage, res: ServerResponse, data?: any) => void
+  (
+    req: IncomingMessage,
+    res: ServerResponse,
+    data?: any,
+  ) => Promise<{ message: any; statusCode: number }>
 > = {
   "POST /users/json": createUserJson,
   "GET /users/json": getAllUserJson,
@@ -28,10 +32,10 @@ const routes: Record<
   "GET /users/mongo": getAllUserMongo,
 };
 
-export const routeRequest = (
+export const routeRequest = async (
   req: IncomingMessage,
   res: ServerResponse,
-  data?: any
+  data?: any,
 ) => {
   const method = req.method;
   const url = req.url;
@@ -41,7 +45,7 @@ export const routeRequest = (
   const handler = routes[routeKey];
 
   if (handler) {
-    const result = handler(req, res, data);
+    const result = await handler(req, res, data);
     sendResponse(req, res, result.message, result.statusCode);
   } else {
     sendResponse(req, res, { error: "Route Not Found" }, 404);

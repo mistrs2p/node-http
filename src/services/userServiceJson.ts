@@ -1,16 +1,15 @@
 import { join } from "path";
-import { readFileSync, writeFileSync } from "fs";
+import { readFile, writeFile } from "fs/promises";
 
 // Utility function to read users from the JSON file
-export const readUsersFromFile = (): any[] => {
+export const readUsersFromFile = async (): Promise<any> => {
   const filePath = join(__dirname, "../data/users.json");
-  const data = readFileSync(filePath, "utf8");
+  const data = await readFile(filePath, "utf8");
   return JSON.parse(data);
 };
 
 // Utility function to write users to the JSON file
-export const writeUsersToFile = (users: any[]): void => {
+export const writeUsersToFile = async (users: any[]): Promise<void> => {
   const filePath = join(__dirname, "../data/users.json");
-  writeFileSync(filePath, JSON.stringify(users, null, 2), "utf8");
+  await writeFile(filePath, JSON.stringify(users, null, 2), "utf8");
 };
-
