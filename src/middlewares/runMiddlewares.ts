@@ -12,13 +12,12 @@ const runMiddlewares = (
   req: IncomingMessage,
   res: ServerResponse,
   middlewares: Middleware[],
-  callback: NextFunction
+  next: NextFunction
 ) => {
   const run = (index: number, data?: any) => {
     if (index >= middlewares.length) {
-      return callback(data);
+      return next(data);
     }
-    console.log(middlewares[index])
 
     middlewares[index](req, res, (result) => {
       run(index + 1, result);

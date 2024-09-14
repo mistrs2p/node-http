@@ -7,6 +7,7 @@ import bodyHandler from "./middlewares/bodyHandler";
 import dotenv from "dotenv";
 import runMiddlewares from "./middlewares/runMiddlewares";
 import { routeRequest } from "./routes";
+import validateUserData from "./middlewares/validation";
 
 dotenv.config();
 
@@ -18,13 +19,14 @@ type Middleware = (
   next: NextFunction
 ) => void;
 
-const middlewares: Middleware[] = [cors, logger, bodyHandler];
+const middlewares: Middleware[] = [cors, logger, bodyHandler, validateUserData];
 
 const PORT = process.env.PORT || 3001;
 
 const server = createServer(async (req, res) => {
   try {
     runMiddlewares(req, res, middlewares, (data?: any) => {
+      console.log("runMiddlewares", data)
       routeRequest(req, res, data);
     });
   } catch (err) {

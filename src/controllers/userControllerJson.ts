@@ -3,21 +3,20 @@ import {
   readUsersFromFile,
   writeUsersToFile,
 } from "../services/userServiceJson";
-import { getUser, userCreate } from "./userController";
 import { CustomResponse } from "../utils/responseClass";
 
 export const getAllUserJson = (
   req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>,
+  res: ServerResponse<IncomingMessage>
 ) => {
   const users = readUsersFromFile();
-  getUser(req, res, users);
+  new CustomResponse(req, res).handleResponse({ message: users }, 200);
 };
 
 export const createUserJson = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
-  data: any,
+  data: any
 ) => {
   console.log("createUser", data);
   const users = readUsersFromFile();

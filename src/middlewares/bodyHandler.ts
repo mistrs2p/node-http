@@ -13,6 +13,7 @@ const bodyHandler = (
 
   req.on("end", () => {
     data = JSON.parse(body);
+    console.log(data);
     next(data);
   });
 };
