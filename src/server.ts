@@ -25,10 +25,17 @@ const PORT = process.env.PORT || 3001;
 
 const server = createServer(async (req, res) => {
   try {
-    runMiddlewares(req, res, middlewares, (data?: any) => {
-      console.log("runMiddlewares", data)
-      routeRequest(req, res, data);
+    cors(req, res, (data?: any) => {
+      logger(req, res, (data?: any) => {
+        bodyHandler(req, res, (data?: any) => {
+          routeRequest(req, res, data);
+        });
+      });
     });
+    // runMiddlewares(req, res, middlewares, (data?: any) => {
+    //   console.log("runMiddlewares", data)
+    //   routeRequest(req, res, data);
+    // });
   } catch (err) {
     errorHandler(err, req, res);
   }

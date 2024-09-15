@@ -8,7 +8,7 @@ const validateUserData = (
   data?: any
 ): void => {
   // const { name, email } = data || {};
-  console.log("validation Data", next(data))
+  console.log("validation Data", data)
   // if (
   //   !name ||
   //   typeof name !== "string" ||

@@ -2,21 +2,12 @@ import { IncomingMessage, ServerResponse } from "http";
 import {
   readUsersFromFile,
   writeUsersToFile,
-} from "../services/userServiceJson";
-import { sendResponse } from "../utils/responseClass";
+} from "../../../services/userServiceJson";
 
-export const getAllUserJson = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>,
-): Promise<{ message: any; statusCode: number }> => {
-  const users = await readUsersFromFile();
-  return { message: users, statusCode: 200 };
-};
-
-export const createUserJson = async (
-  req: IncomingMessage,
-  res: ServerResponse<IncomingMessage>,
-  data: any,
+const createUserJson = async (
+  _req: IncomingMessage,
+  _res: ServerResponse<IncomingMessage>,
+  data: any
 ): Promise<{ message: any; statusCode: number }> => {
   console.log("createUser", data);
   const users = await readUsersFromFile();
@@ -28,3 +19,5 @@ export const createUserJson = async (
   await writeUsersToFile(users);
   return { message: newUser, statusCode: 201 };
 };
+
+export default createUserJson;
