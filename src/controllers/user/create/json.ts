@@ -3,12 +3,13 @@ import {
   readUsersFromFile,
   writeUsersToFile,
 } from "../../../services/userServiceJson";
+import { Response, Result } from "../../../utils/Response";
 
 const createUserJson = async (
   _req: IncomingMessage,
   _res: ServerResponse<IncomingMessage>,
   data: any
-): Promise<{ message: any; statusCode: number }> => {
+): Promise<Result> => {
   console.log("createUser", data);
   const users = await readUsersFromFile();
   console.log(data);
@@ -17,7 +18,7 @@ const createUserJson = async (
   newUser.id = users.length ? users[users.length - 1].id + 1 : 1;
   users.push(newUser);
   await writeUsersToFile(users);
-  return { message: newUser, statusCode: 201 };
+  return new Response({ body: newUser, statusCode: 201 });
 };
 
 export default createUserJson;

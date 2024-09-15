@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { sendResponse } from "../utils/responseClass";
+import { ErrorResponse, JsonResponse, Result } from "../utils/Response";
 
 import getAllUserJson from "../controllers/user/getAll/json";
 import createUserJson from "../controllers/user/create/json";
@@ -12,9 +13,9 @@ import createUserMysql from "../controllers/user/create/mysql";
 
 type RouteHandler = (
   req: IncomingMessage,
-  res: ServerResponse,
+  res: ServerResponse<IncomingMessage>,
   data?: any
-) => Promise<{ message: any; statusCode: number }>;
+) => Promise<Result>;
 
 type Route = {
   method: string;
@@ -43,50 +44,32 @@ registerRoute("GET", "/users/mysql", getAllUserMysql);
 
 export const routeRequest = async (
   req: IncomingMessage,
-  res: ServerResponse,
+  res: ServerResponse<IncomingMessage>,
   data?: any
-): Promise<void> => {
+): Promise<Result | undefined> => {
   try {
     const { method = "", url = "" } = req;
 
     const normalizedMethod = method.toUpperCase();
-    const normalizedUrl    = url.replace(/\/+$/, ""); 
+    const normalizedUrl = url.replace(/\/+$/, "");
 
     const route = routes.find(
       (r) => r.method === normalizedMethod && r.url === normalizedUrl
     );
 
     if (!route) {
-      sendResponse(req, res, { error: "Route Not Found" }, 404);
+      new JsonResponse({ body: "Route Not Found", statusCode: 404 });
       return;
     }
 
-    const { message, statusCode } = await route.handler(req, res, data);
-    sendResponse(req, res, message, statusCode);
+    const result: Result = await route.handler(req, res, data);
+    new JsonResponse(result).toResponse(result);
   } catch (error) {
     console.error("Error in route handling:", error);
-    sendResponse(req, res, { error: "Internal Server Error" }, 500);
+    new ErrorResponse().toResponse(error);
+    // sendResponse(req, res, { error: "Internal Server Error" }, 500);
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const routes: Record<
 //   string,

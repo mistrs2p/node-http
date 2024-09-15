@@ -1,12 +1,13 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { getUsersFromMongo } from "../../../services/userServiceMongo";
+import { Response, Result } from "../../../utils/Response";
 
 const getAllUserMongo = async (
   _req: IncomingMessage,
   _res: ServerResponse<IncomingMessage>
-): Promise<{ message: any; statusCode: number }> => {
+): Promise<Result> => {
   const users = await getUsersFromMongo();
-  return { message: users, statusCode: 200 };
+  return new Response({ body: users, statusCode: 200 });
 };
 
 export default getAllUserMongo;
