@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 
-const logger = (
+const loggerMiddleware = (
   req: IncomingMessage,
   res: ServerResponse,
   next: () => void
@@ -15,4 +15,4 @@ const logger = (
   next();
 };
 
-export default logger;
+export default loggerMiddleware;

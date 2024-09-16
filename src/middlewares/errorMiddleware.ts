@@ -1,12 +1,12 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { CustomResponse } from "../utils/responseClass";
 
-const errorHandler = (
+const errorMiddleware = (
   err: unknown,
   req: IncomingMessage,
   res: ServerResponse,
 ): void => {
-  let statusCode: number = res.statusCode || 500;
+  let statusCode: number = res.statusCode ?? 500;
 
   const data = {
     error: "",
@@ -20,4 +20,4 @@ const errorHandler = (
   }
   new CustomResponse(req, res).handleResponse(data, statusCode);
 };
-export default errorHandler;
+export default errorMiddleware;

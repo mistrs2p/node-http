@@ -1,45 +1,16 @@
 import { createServer, IncomingMessage, ServerResponse } from "http";
-import logger from "./middlewares/logger";
-import cors from "./middlewares/cors";
-import errorHandler from "./middlewares/errorHandler";
-import bodyHandler from "./middlewares/bodyHandler";
+import { initMiddleware } from "./middlewares/initMidlewares";
 
 import dotenv from "dotenv";
-import runMiddlewares from "./middlewares/runMiddlewares";
-import { routeRequest } from "./routes";
-import validateUserData from "./middlewares/validation";
-
 dotenv.config();
-
-type NextFunction = (data?: any) => void;
-
-type Middleware = (
-  req: IncomingMessage,
-  res: ServerResponse,
-  next: NextFunction
-) => void;
-
-const middlewares: Middleware[] = [cors, logger, bodyHandler];
 
 const PORT = process.env.PORT || 3001;
 
-const server = createServer(async (req, res) => {
-  try {
-    cors(req, res, (data?: any) => {
-      logger(req, res, (data?: any) => {
-        bodyHandler(req, res, (data?: any) => {
-          routeRequest(req, res, data);
-        });
-      });
-    });
-    // runMiddlewares(req, res, middlewares, (data?: any) => {
-    //   console.log("runMiddlewares", data)
-    //   routeRequest(req, res, data);
-    // });
-  } catch (err) {
-    errorHandler(err, req, res);
+const server = createServer(
+  async (req: IncomingMessage, res: ServerResponse<IncomingMessage>) => {
+    initMiddleware(req, res);
   }
-});
+);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

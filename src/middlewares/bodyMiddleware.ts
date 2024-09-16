@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
-const bodyHandler = (
+const bodyMiddleware = (
   req: IncomingMessage,
   _res: ServerResponse,
   next: (data?: any) => void
@@ -18,4 +18,4 @@ const bodyHandler = (
   });
 };
 
-export default bodyHandler;
+export default bodyMiddleware;

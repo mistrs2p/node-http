@@ -13,17 +13,18 @@ interface Responsable {
 export class Response implements Responsable {
   readonly body: Result["body"];
   readonly statusCode: Result["statusCode"];
-  readonly headers: Result["headers"];
+  // readonly headers: Result["headers"];
   constructor(result?: Result) {
     if (result !== undefined && "statusCode" in result) {
       this.statusCode = result.statusCode;
     } else {
       this.statusCode = 200;
     }
-    if (result !== undefined && "headers" in result) {
-      this.headers = result.headers;
-    } else {
-    }
+    // if (result !== undefined && "headers" in result) {
+    //   this.headers = result.headers;
+    // } else {
+    //   this.headers = {};
+    // }
     if (result !== undefined && "body" in result) {
       this.body = result.body;
     } else {
@@ -31,9 +32,10 @@ export class Response implements Responsable {
     }
   }
   toResponse(response: ServerResponse): void {
-    for (let k in this.headers) {
-      response.setHeader(k, this.headers[k]);
-    }
+    // for (let k in this.headers) {
+    //   console.log(k, this.headers[k]);
+    //   response.setHeader(k, this.headers[k]);
+    // }
     response.statusCode = this.statusCode!;
     response.end(this.body);
   }

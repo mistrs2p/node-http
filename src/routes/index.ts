@@ -57,13 +57,12 @@ export const routeRequest = async (
     );
 
     if (!route) {
-      new Response({ body: "Route Not Found", statusCode: 404 }).toResponse(res);
+      new ErrorResponse().toResponse(res);
       return;
     }
 
     const result = await route.handler(req, res, data);
-    result.toResponse(res)
-    
+    result.toResponse(res);
   } catch (error) {
     console.error("Error in route handling:", error);
     new ErrorResponse().toResponse(error);
