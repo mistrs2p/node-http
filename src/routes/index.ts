@@ -1,6 +1,5 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { sendResponse } from "../utils/responseClass";
-import { ErrorResponse, JsonResponse, Result } from "../utils/Response";
+import { ErrorResponse, Response, Result } from "../utils/Response";
 
 import getAllUserJson from "../controllers/user/getAll/json";
 import createUserJson from "../controllers/user/create/json";
@@ -15,7 +14,7 @@ type RouteHandler = (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
   data?: any
-) => Promise<Result>;
+) => Promise<Response>;
 
 type Route = {
   method: string;
@@ -58,53 +57,15 @@ export const routeRequest = async (
     );
 
     if (!route) {
-      new JsonResponse({ body: "Route Not Found", statusCode: 404 });
+      new Response({ body: "Route Not Found", statusCode: 404 }).toResponse(res);
       return;
     }
 
-    const result: Result = await route.handler(req, res, data);
-    new JsonResponse(result).toResponse(result);
+    const result = await route.handler(req, res, data);
+    result.toResponse(res)
+    
   } catch (error) {
     console.error("Error in route handling:", error);
     new ErrorResponse().toResponse(error);
-    // sendResponse(req, res, { error: "Internal Server Error" }, 500);
   }
 };
-
-// const routes: Record<
-//   string,
-//   (
-//     req: IncomingMessage,
-//     res: ServerResponse,
-//     data?: any,
-//   ) => Promise<{ message: any; statusCode: number }>
-// > = {
-//   "POST /users/json": createUserJson,
-//   "GET /users/json": getAllUserJson,
-
-//   "POST /users/mysql": createUserMysql,
-//   "GET /users/mysql": getAllUserMysql,
-
-//   "POST /users/mongo": createUserMongo,
-//   "GET /users/mongo": getAllUserMongo,
-// };
-
-// export const routeRequest = async (
-//   req: IncomingMessage,
-//   res: ServerResponse,
-//   data?: any,
-// ) => {
-//   const method = req.method;
-//   const url = req.url;
-
-//   const routeKey = `${method} ${url}`;
-
-//   const handler = routes[routeKey];
-
-//   if (handler) {
-//     const result = await handler(req, res, data);
-//     sendResponse(req, res, result.message, result.statusCode);
-//   } else {
-//     sendResponse(req, res, { error: "Route Not Found" }, 404);
-//   }
-// };

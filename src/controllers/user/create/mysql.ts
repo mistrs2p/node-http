@@ -1,15 +1,15 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { createUserInMysql } from "../../../services/userServiceMysql";
-import { Response, Result } from "../../../utils/Response";
+import { JsonResponse, Response } from "../../../utils/Response";
 
 const createUserMysql = async (
   _req: IncomingMessage,
   _res: ServerResponse<IncomingMessage>,
   data: any
-): Promise<Result> => {
+): Promise<Response> => {
   const { name, email } = data;
   const newUser = await createUserInMysql({ name, email });
-  return new Response({ body: newUser, statusCode: 201 });
+  return new JsonResponse({ body: newUser, statusCode: 201 });
 };
 
 export default createUserMysql;
