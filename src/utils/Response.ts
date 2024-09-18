@@ -13,18 +13,19 @@ interface Responsable {
 export class Response implements Responsable {
   readonly body: Result["body"];
   readonly statusCode: Result["statusCode"];
-  // readonly headers: Result["headers"];
+  readonly headers: Result["headers"];
   constructor(result?: Result) {
     if (result !== undefined && "statusCode" in result) {
       this.statusCode = result.statusCode;
     } else {
       this.statusCode = 200;
     }
-    // if (result !== undefined && "headers" in result) {
-    //   this.headers = result.headers;
-    // } else {
-    //   this.headers = {};
-    // }
+    if (result !== undefined && "headers" in result) {
+      console.log(result);
+      this.headers = result.headers;
+    } else {
+      this.headers = {};
+    }
     if (result !== undefined && "body" in result) {
       this.body = result.body;
     } else {
@@ -32,10 +33,13 @@ export class Response implements Responsable {
     }
   }
   toResponse(response: ServerResponse): void {
-    // for (let k in this.headers) {
-    //   console.log(k, this.headers[k]);
-    //   response.setHeader(k, this.headers[k]);
-    // }
+    for (let k in this.headers) {
+      console.log(this.headers[k]);
+      console.log(k);
+      // if (this.headers.hasOwnProperty(k) && this.headers[k] !== undefined) {
+      //   response.setHeader(k, this.headers[k]!);
+      // }
+    }
     response.statusCode = this.statusCode!;
     response.end(this.body);
   }
@@ -56,12 +60,16 @@ export class JsonResponse extends Response {
 }
 ////////
 export class ErrorResponse extends Error implements Responsable {
-  toResponse(response: any): void {
+  constructor(
+    private statusCode: number = 500,
+    private body: any = { error: "Internal Server Error" }
+  ) {
+    super();
+  }
+  toResponse(response: ServerResponse<IncomingMessage>): void {
     new JsonResponse({
-      statusCode: 500,
-      body: {
-        isOk: false,
-      },
+      statusCode: this.statusCode,
+      body: this.body,
     }).toResponse(response);
   }
 }

@@ -57,14 +57,14 @@ export const routeRequest = async (
     );
 
     if (!route) {
-      new ErrorResponse().toResponse(res);
+      new ErrorResponse(404, {message: "Route Not Found!", isOk: false}).toResponse(res);
       return;
     }
 
     const result = await route.handler(req, res, data);
     result.toResponse(res);
   } catch (error) {
-    console.error("Error in route handling:", error);
-    new ErrorResponse().toResponse(error);
+    console.error("Error in route handling:", res);
+    new ErrorResponse().toResponse(res);
   }
 };
