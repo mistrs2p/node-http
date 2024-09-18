@@ -45,26 +45,22 @@ export const routeRequest = async (
   req: IncomingMessage,
   res: ServerResponse<IncomingMessage>,
   data?: any
-): Promise<Result | undefined> => {
-  try {
-    const { method = "", url = "" } = req;
+): Promise<Response> => {
+  const { method = "", url = "" } = req;
 
-    const normalizedMethod = method.toUpperCase();
-    const normalizedUrl = url.replace(/\/+$/, "");
+  const normalizedMethod = method.toUpperCase();
+  const normalizedUrl = url.replace(/\/+$/, "");
 
-    const route = routes.find(
-      (r) => r.method === normalizedMethod && r.url === normalizedUrl
-    );
+  const route = routes.find(
+    (r) => r.method === normalizedMethod && r.url === normalizedUrl
+  );
 
-    if (!route) {
-      new ErrorResponse(404, {message: "Route Not Found!", isOk: false}).toResponse(res);
-      return;
-    }
-
-    const result = await route.handler(req, res, data);
-    result.toResponse(res);
-  } catch (error) {
-    console.error("Error in route handling:", res);
-    new ErrorResponse().toResponse(res);
+  if (!route) {
+    throw new ErrorResponse(404, {
+      message: "Route Not Found!",
+      isOk: false,
+    });
   }
+
+  return await route.handler(req, res, data);
 };
